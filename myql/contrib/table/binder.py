@@ -19,7 +19,7 @@ class BinderFunction(BaseBinder):
         - func_file : file containing your code
         """
         super(BinderFunction, self).__init__('function', inputs=inputs)
-        self.func_name = func_name
+        self.__name__ = func_name
         self.etree.set('name', func_name)
 
         if func_code:
@@ -81,21 +81,21 @@ class BinderMeta(type):
     def __new__(cls, name, bases, dct):
 
         if name != 'BinderModel':
-            binder_attr = {key: value for (key, value) in dct.items() if key in cls.INPUT_KEYS}
-            binder_attr['inputs'] = [ value for value in dct.values() if isinstance(value, BaseInput)]
-            paging = [ value for value in dct.values() if isinstance(value, BasePaging)]
+            binder_attr = {key: value for (key, value) in list(dct.items()) if key in cls.INPUT_KEYS}
+            binder_attr['inputs'] = [ value for value in list(dct.values()) if isinstance(value, BaseInput)]
+            paging = [ value for value in list(dct.values()) if isinstance(value, BasePaging)]
             if paging :
                 binder_attr['paging'] = paging[0]
 
             binder = Binder(**binder_attr)
             if dct.get('function',None):
                 binder.addFunction(func_code='', from_file=dct['function'])
-            dct = { key : value for (key, value) in dct.items() if key in ('__module__', '__metaclass__')}
+            dct = { key : value for (key, value) in list(dct.items()) if key in ('__module__', '__metaclass__')}
             dct['binder'] = binder
             # Add KeyException Management
         return super(BinderMeta,cls).__new__(cls, name, bases, dct)
 
 
-class BinderModel(Binder):
-    __metaclass__ = BinderMeta
+class BinderModel(Binder, metaclass=BinderMeta):
+    pass
 

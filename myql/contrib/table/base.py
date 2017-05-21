@@ -58,7 +58,7 @@ class BaseBinder(Base):
         """
         t_binder = ctree.Element(self.name)
 
-        for k,v in self.__dict__.items():
+        for k,v in list(self.__dict__.items()):
             if k not in ('name', 'urls', 'inputs', 'paging') and v :
                 t_binder.set(k,v)
 
@@ -210,7 +210,7 @@ class BaseInput(object):
         """
         t_elt = ctree.Element(self.name)
 
-        for k,v in [ (key,value) for key,value in self.__dict__.items() if key != 'name']: # Excluding name from list of items
+        for k,v in [ (key,value) for key,value in list(self.__dict__.items()) if key != 'name']: # Excluding name from list of items
             if v and v != 'false' :
                 t_elt.set(k if k != 'like' else 'as', str(v).lower())
 
@@ -234,10 +234,10 @@ class BasePaging(object):
 
         t_paging = ctree.Element('paging')
         t_paging.set('model', self.model)
-        for key in self.__dict__.keys():
+        for key in list(self.__dict__.keys()):
             if key != 'model':
                 t_tag = ctree.SubElement(t_paging, key)
-                for item in self.__dict__[key].items():
+                for item in list(self.__dict__[key].items()):
                     t_tag.set(*item)
 
         self.etree = t_paging

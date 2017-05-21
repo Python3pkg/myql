@@ -54,14 +54,14 @@ class Table(Base):
         # <table xmlns='' securityLevel='' htpps=''>
         if not self.table_attr :
             self.table_attr = self._TAB_ATTR
-        for attr in self.table_attr.items() :
+        for attr in list(self.table_attr.items()) :
             t_table.set(*attr)
 
         # <meta>
         t_meta = xtree.SubElement(t_table, 'meta')
 
         # Loop over a sorted key,value of class attributes while ignoring table_attr and name
-        for key, value in [(k,v) for k,v in sorted(self.__dict__.items(), key=lambda x: x[0]) if k not in ('table_attr','name') ]:
+        for key, value in [(k,v) for k,v in sorted(list(self.__dict__.items()), key=lambda x: x[0]) if k not in ('table_attr','name') ]:
             if isinstance(value, list): # Works for element like sampleQuery
                 for elt in value:
                     t_tag = xtree.SubElement(t_meta, key) # setting attribute name as a tag name
@@ -122,17 +122,17 @@ class TableMeta(type):
 
     def __new__(cls, name, bases, dct):
         if name != 'TableModel':
-            table_attr = {key: value for (key, value) in dct.items() if key in cls.TABLE_KEYS }
-            table_attr['bindings'] = [ value for value in dct.values() if isinstance(value, Binder) or isinstance(value, BinderFunction)]
+            table_attr = {key: value for (key, value) in list(dct.items()) if key in cls.TABLE_KEYS }
+            table_attr['bindings'] = [ value for value in list(dct.values()) if isinstance(value, Binder) or isinstance(value, BinderFunction)]
             table = Table(**table_attr)
-            dct = { key : value for (key, value) in dct.items() if key in ('__module__', '__metaclass__')}
+            dct = { key : value for (key, value) in list(dct.items()) if key in ('__module__', '__metaclass__')}
             dct['table'] = table
 
         return super(TableMeta, cls).__new__(cls, name, bases, dct)
 
 
-class TableModel(Table):
-    __metaclass__ = TableMeta
+class TableModel(Table, metaclass=TableMeta):
+    pass
 
 
 def BinderFrom(cls_binder_meta):

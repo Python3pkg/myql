@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 import os
 import pdb
@@ -377,7 +377,7 @@ class TestOAuth(unittest.TestCase):
             data = response.json()
             try:
                 current_team = data['query']['results']['team']
-                print(current_team['team_id'],current_team['name'],current_team['number_of_trades'],current_team['number_of_moves'])
+                print((current_team['team_id'],current_team['name'],current_team['number_of_trades'],current_team['number_of_moves']))
             except (Exception,) as e:
                 print(e)
 

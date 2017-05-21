@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+
 
 from tests.tests import TestMYQL
 from tests.tests import TestWeather
